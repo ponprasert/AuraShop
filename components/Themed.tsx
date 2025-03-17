@@ -1,45 +1,57 @@
-/**
- * Learn more about Light and Dark modes:
- * https://docs.expo.io/guides/color-schemes/
- */
-
-import { Text as DefaultText, View as DefaultView } from 'react-native';
-
-import Colors from '@/constants/Colors';
-import { useColorScheme } from './useColorScheme';
+import { Text as DefaultText, View as DefaultView } from 'react-native'
+import Colors from '@/constants/Colors'
+import { useColorScheme } from 'react-native'
 
 type ThemeProps = {
-  lightColor?: string;
-  darkColor?: string;
-};
-
-export type TextProps = ThemeProps & DefaultText['props'];
-export type ViewProps = ThemeProps & DefaultView['props'];
-
-export function useThemeColor(
-  props: { light?: string; dark?: string },
-  colorName: keyof typeof Colors.light & keyof typeof Colors.dark
-) {
-  const theme = useColorScheme() ?? 'light';
-  const colorFromProps = props[theme];
-
-  if (colorFromProps) {
-    return colorFromProps;
-  } else {
-    return Colors[theme][colorName];
-  }
+    lightColor?: string;
+    darkColor?: string;
 }
 
-export function Text(props: TextProps) {
-  const { style, lightColor, darkColor, ...otherProps } = props;
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+export type TextProps = ThemeProps & DefaultText['props'] & {
+    fontWeight?: 'thin' | 'extraLight' | 'light' | 'regular' | 'medium' | 'semiBold' | 'bold' | 'extraBold' | 'black';
+}
 
-  return <DefaultText style={[{ color }, style]} {...otherProps} />;
+export type ViewProps = ThemeProps & DefaultView['props']
+
+
+export function useThemeColor(
+    props: { light?: string; dark?: string },
+    colorName: keyof typeof Colors.light & keyof typeof Colors.dark
+  ) {
+    const theme = useColorScheme() ?? 'light';
+    const colorFromProps = props[theme];
+  
+    if (colorFromProps) {
+      return colorFromProps;
+    } else {
+      return Colors[theme][colorName];
+    }
+}
+
+
+export function Text(props: TextProps) {
+    const { style, lightColor, darkColor, fontWeight = 'regular', ...otherProps } = props;
+    const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
+  
+    // Map fontWeight to the corresponding fontFamily
+    const fontFamilyMap = {
+      thin: 'NotoSansThai-Thin',
+      extraLight: 'NotoSansThai-ExtraLight',
+      light: 'NotoSansThai-Light',
+      regular: 'NotoSansThai-Regular',
+      medium: 'NotoSansThai-Medium',
+      semiBold: 'NotoSansThai-SemiBold',
+      bold: 'NotoSansThai-Bold',
+      extraBold: 'NotoSansThai-ExtraBold',
+      black: 'NotoSansThai-Black',
+    };
+  
+    return <DefaultText style={[{ color, fontFamily: fontFamilyMap[fontWeight] }, style]} {...otherProps} />;
 }
 
 export function View(props: ViewProps) {
-  const { style, lightColor, darkColor, ...otherProps } = props;
-  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
-
-  return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
+    const { style, lightColor, darkColor, ...otherProps } = props;
+    const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
+  
+    return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
 }

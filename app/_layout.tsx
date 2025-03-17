@@ -1,59 +1,49 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/components/useColorScheme';
-
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
-
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
-};
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+// Import your global CSS file
+import "../global.css"
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
+import { useEffect } from "react"
+import { Stack } from 'expo-router'
+import { useFonts } from 'expo-font'
+import { useColorScheme, StatusBar } from 'react-native'
+import { View } from "@/components/Themed"
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ...FontAwesome.font,
+
+  const [fontsLoaded, error] = useFonts({
+    "NotoSansThai-Thin": require("../assets/fonts/NotoSansThai-Thin.ttf"),
+    "NotoSansThai-ExtraLight": require("../assets/fonts/NotoSansThai-ExtraLight.ttf"),
+    "NotoSansThai-Light": require("../assets/fonts/NotoSansThai-Light.ttf"),
+    "NotoSansThai-Regular": require("../assets/fonts/NotoSansThai-Regular.ttf"),
+    "NotoSansThai-Medium": require("../assets/fonts/NotoSansThai-Medium.ttf"),
+    "NotoSansThai-SemiBold": require("../assets/fonts/NotoSansThai-SemiBold.ttf"),
+    "NotoSansThai-Bold": require("../assets/fonts/NotoSansThai-Bold.ttf"),
+    "NotoSansThai-ExtraBold": require("../assets/fonts/NotoSansThai-ExtraBold.ttf"),
+    "NotoSansThai-Black": require("../assets/fonts/NotoSansThai-Black.ttf"),
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
+  // Apply the fonts to the app
   useEffect(() => {
     if (error) throw error;
-  }, [error]);
+  }, [fontsLoaded, error])
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+  if (!fontsLoaded) return null
+  if(!fontsLoaded && !error) return null
 
-  if (!loaded) {
-    return null;
-  }
-
-  return <RootLayoutNav />;
+  return <RootLayoutNav />
 }
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
-
-  return (
+  return(
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
+      <View className="h-screen">
+        <StatusBar className={colorScheme === 'dark' ? 'bg-black text-white': 'bg-white text-black'} />
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name='(auth)' options={{ headerShown: false }} />
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+        </Stack>
+      </View>
     </ThemeProvider>
-  );
+  )
 }
