@@ -1,14 +1,35 @@
 import { Redirect } from 'expo-router'
-import React from 'react'
+import React, { useState,useEffect} from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import CustomButton from '@/components/CustomButton'
 import { ScrollView, View, Image, Text } from 'react-native'
 import { images } from "@/constants"
 import { router } from 'expo-router'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function Index() {
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [isIntialized, setIsIntialized]=useState(false);
+  
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        const isLoggedIn = await AsyncStorage.getItem('isLoggedIn');
+        console.log('isLoggedIn:', isLoggedIn);
+        if (isLoggedIn === 'true') {
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        console.error('Failed to check login status:', error);
+      } finally {
+        setIsIntialized
+      }
+    };
 
+    initialize()
+  }, [])
+
+  if (!isIntialized)
   return (
     <>
      { isLoggedIn && <Redirect href="/(tabs)/home" /> }

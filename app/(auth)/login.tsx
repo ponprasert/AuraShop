@@ -7,13 +7,14 @@ import { useState } from 'react'
 import Button from '@/components/Button'
 import { router } from 'expo-router'
 import { supabase } from '@/utils/supabase'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default function login() {
 
   // กำหนดตัวแปร State สำหรับเก็บค่าของ Email และ Password
   const [form, setForm] = useState({
-    email: "your@email.com",
-    password: "yourpassword",
+    email: "67319010039@skntc.ac.th",
+    password: "Boom2545",
   })
 
   // กำหนดตัวแปรเก็บสถานะการ submit ข้อมูล
@@ -39,6 +40,9 @@ export default function login() {
       Alert.alert("Login Failed", error.message)
     } else {
       console.log('Token:', data.session?.access_token) // Log the token
+      await AsyncStorage.setItem("token",data.session?.access_token);
+      await AsyncStorage.setItem('isLoggedIn','true');
+      
       Alert.alert(
         'Login Successful',
         'You have successfully registered. Press OK to login.',

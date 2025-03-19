@@ -24,7 +24,8 @@ const SearchInput = ({ initialQuery }: { initialQuery?: string }) => {
           if (query === "")
             return Alert.alert(
               "ไม่พบคำค้นหา",
-              "กรุณาระบุคำค้นหา"
+              "กรุณาระบุคำค้นหา",
+              [{ text: "Ok" }]
             );
 
           if (pathname.startsWith("/search")) router.setParams({ query });
